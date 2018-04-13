@@ -119,6 +119,7 @@ class WeightQuickUnionDisjointSet(AbstractDisjointSet):
     def __init__(self, n: int):
         """`
         union时间复杂度为logN，find时间复杂度为logN
+        加了路径压缩以后，union和find时间复杂度接近1（有均摊成本）
         """
         self._count = n
         self.parent_map = {}
@@ -146,11 +147,11 @@ class WeightQuickUnionDisjointSet(AbstractDisjointSet):
         while q != self.parent_map[q]:
             q = self.parent_map[q]
         # # 路径压缩,压缩以后高度为2了
-        # while p != self.parent_map[p]:
-        #     p_last = p
-        #     p = self.parent_map[p]
-        #     self.parent_map[p_last] = q
-        #     self.sz_map[p_last] = 2
+        while p != self.parent_map[p]:
+            p_last = p
+            p = self.parent_map[p]
+            self.parent_map[p_last] = q
+            self.sz_map[p_last] = 2
         return q
 
     def __repr__(self):
@@ -191,6 +192,9 @@ def test_tiny_weight_quick_union():
                 continue
             uf.union(p, q)
             print("%s %s" % (p, q))
+        # 便利一次执行find，把说有路径都压缩了
+        for i in range(array_len):
+            uf.find(i)
         print("%s components" % uf.count())
         print(uf)
 
@@ -218,13 +222,19 @@ def test_test_medium_weight_quick_union():
                 continue
             uf.union(p, q)
             print("%s %s" % (p, q))
+        for i in range(array_len):
+            uf.find(i)
+        value_map = {}
+        for value in uf.parent_map.values():
+            value_map[value] = True
         print("%s components" % uf.count())
+        print("value_map:%s" % value_map)
 
 
 if __name__ == '__main__':
     # test_tiny()
     # test_tiny_quick_union()
-    test_tiny_weight_quick_union()
-    test_medium_quick_union()
+    # test_tiny_weight_quick_union()
+    # test_medium_quick_union()
     test_test_medium_weight_quick_union()
     pass
