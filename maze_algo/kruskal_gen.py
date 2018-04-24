@@ -23,7 +23,7 @@ The w(little W) is only a dot in such 3X3 maze.
 
 
 class KruskalMaze(object):
-    def __init__(self, width: int, height: int, ):
+    def __init__(self, width: int, height: int, not_care_random=True):
         """
         Init a maze.
 
@@ -63,10 +63,11 @@ class KruskalMaze(object):
                 if not cell_dset.is_connected(x, y1, x, y2):
                     self.grid[x][y] = 0
                     cell_dset.union(x, y1, x, y2)
-        additional_wall = random.randint(0, len(not_care_ls))
-        for i in random.choice(len(not_care_ls), additional_wall, False):
-            x, y = not_care_ls[i]
-            self.grid[x][y] = 0
+        if not_care_random:
+            additional_wall = random.randint(0, len(not_care_ls))
+            for i in random.choice(len(not_care_ls), additional_wall, False):
+                x, y = not_care_ls[i]
+                self.grid[x][y] = 0
 
     def __str__(self):
         return str(self.grid)
